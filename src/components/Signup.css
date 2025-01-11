@@ -1,0 +1,27 @@
+.form {
+    margin-left: 15%;
+    margin-right: 15%;
+}
+
+.forminput {
+    border: 1px solid black;
+    margin-bottom: 0.5rem;
+}
+
+.formlabel {
+    margin-top: 0.5rem;
+}
+
+.formBtn {
+    text-align: center;
+    padding-bottom: 12px;
+    padding-top: 10px;
+}
+
+.signupform {
+    background-color: #56CCF2;
+    margin-left: 35%;
+    margin-right: 35%;
+    border-radius: 15px;
+    margin-top: 2rem;
+}
