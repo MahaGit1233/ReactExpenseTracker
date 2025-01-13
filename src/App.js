@@ -1,13 +1,16 @@
-import { Button } from "react-bootstrap";
 import Signup from "./components/Signup";
+import { useContext } from "react";
+import AuthContext from "./components/auth-context";
+import Expense from "./components/Expense";
 
 function App() {
+  const authCtx = useContext(AuthContext);
+
   return (
-    <div style={{justifyItems:"center"}}>
-      <Signup />
-      <Button style={{marginTop:"5%"}} variant="outline-dark">Have an account? Login</Button>
-    </div>
+      <div style={{ justifyItems: "center" }}>
+        {authCtx.isLoggedIn?<Expense />:<Signup />}
+      </div>
   );
-}
+};
 
 export default App;
