@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import './Signup.css';
 import { Alert, Button, Form } from "react-bootstrap";
-import AuthContext from "./auth-context";
+import AuthContext from "../Store/auth-context";
 
 const Signup = () => {
     const [enteredMail, setEnteredMail] = useState('');
