@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import AuthContext from "../Store/auth-context";
 import './ProfileForm.css';
@@ -8,6 +8,38 @@ const ProfileForm = () => {
     const [enteredURL, setEnteredURL] = useState('');
 
     const authCtx = useContext(AuthContext);
+
+    useEffect(() => {
+        fetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyDZDlAptDzLh8R3jC0ZXi-3cbYAQrdt1o8', {
+            method: 'POST',
+            body: JSON.stringify({
+                idToken: authCtx.token,
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }).then(res => {
+            if (res.ok) {
+                console.log(res.users);
+                return res.json();
+            }
+            else {
+                return res.json().then((data) => {
+                    alert(data.error.message);
+                    console.log(data.error.message);
+                })
+            }
+        }).then((data) => {
+            console.log(data.users);
+            const user = data.users[0];
+            setEnteredName(user.displayName);
+            setEnteredURL(user.photoUrl);
+            console.log(enteredName);
+            console.log(enteredURL);
+        }).catch(err => {
+            console.log(err);
+        })
+    }, [authCtx.token]);
 
     const nameChangeHandler = (event) => {
         setEnteredName(event.target.value);
@@ -26,6 +58,7 @@ const ProfileForm = () => {
                 idToken: authCtx.token,
                 displayName: enteredName,
                 photoUrl: enteredURL,
+                deleteAttribute: [],
                 returnSecureToken: true,
             }),
             headers: {
@@ -55,7 +88,7 @@ const ProfileForm = () => {
 
     return (
         <div className="profile">
-            <h2 style={{textAlign:"center"}}>Profile</h2>
+            <h2 style={{ textAlign: "center" }}>Profile</h2>
             <div className="signupform">
                 <Form className="form" onSubmit={submitHandler}>
                     <Form.Group>
@@ -66,7 +99,7 @@ const ProfileForm = () => {
                         <Form.Label className="formlabel">Profile Photo URL</Form.Label>
                         <Form.Control className="forminput" type="url" value={enteredURL} onChange={urlChangeHandler} />
                     </Form.Group>
-                    <div className="formBtn" style={{display:"flex", gap:"3%"}}>
+                    <div className="formBtn" style={{ display: "flex", gap: "3%" }}>
                         <Button type="submit" variant="outline-dark" >Update</Button>
                         <Button variant="outline-dark" >Close</Button>
                     </div>

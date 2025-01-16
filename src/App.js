@@ -5,7 +5,7 @@ import Expense from "./components/Pages/Expense";
 import { Switch } from "react-router-dom";
 import { Route } from "react-router-dom";
 import ProfileForm from "./components/Pages/ProfileForm";
-import { BrowserRouter } from "react-router-dom/cjs/react-router-dom.min";
+import { BrowserRouter } from "react-router-dom";
 
 function App() {
   const authCtx = useContext(AuthContext);
