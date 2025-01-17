@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Button, Navbar } from "react-bootstrap";
 import AuthContext from "../Store/auth-context";
 import './Expense.css';
@@ -6,18 +6,54 @@ import { NavLink } from "react-router-dom";
 
 const Expense = () => {
     const authCtx = useContext(AuthContext);
+    const [verifyEmail, setVerifyEmail] = useState(false);
+
+    const verificationHandler = (event) => {
+        event.preventDefault();
+
+        fetch('https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyDZDlAptDzLh8R3jC0ZXi-3cbYAQrdt1o8', {
+            method: 'POST',
+            body: JSON.stringify({
+                requestType: "VERIFY_EMAIL",
+                idToken: authCtx.token,
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }).then((res) => {
+            if (res.ok) {
+                console.log('ok');
+                return res.json();
+            }
+            else {
+                return res.json().then((data) => {
+                    alert(data.error.message);
+                    console.log(data.error.message);
+                })
+            }
+        }).then((data) => {
+            console.log(data.email);
+            setVerifyEmail(true);
+            console.log(verifyEmail);
+        }).catch((err) => {
+            alert(err.message);
+        })
+    }
 
     return (
         <div>
             <Navbar className="header" style={{ position: "fixed", top: "0", left: "0", width: "100%", zIndex: "1000", backgroundColor: "gray", color: "whitesmoke" }}>
                 <i style={{ marginLeft: "2%" }}>Welcome to Expense Tracker!</i>
                 <div>
-                    <div style={{backgroundColor:"bisque", color:"black", borderRadius:"10px",padding:"7px"}}>
+                    <div style={{ backgroundColor: "bisque", color: "black", borderRadius: "10px", padding: "7px" }}>
                         <i>Your profile is incomplete. <NavLink to='/profile'>Complete Now</NavLink></i>
                     </div>
                     <Button onClick={authCtx.logout}>Logout</Button>
                 </div>
             </Navbar>
+            <div className="verifyBtn">
+                <Button onClick={verificationHandler} variant="outline-dark">Verify EmailID</Button>
+            </div>
         </div>
     )
 };

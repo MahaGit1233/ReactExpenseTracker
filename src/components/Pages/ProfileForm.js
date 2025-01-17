@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import AuthContext from "../Store/auth-context";
 import './ProfileForm.css';
+import { NavLink } from "react-router-dom";
 
 const ProfileForm = () => {
     const [enteredName, setEnteredName] = useState('');
@@ -101,7 +102,7 @@ const ProfileForm = () => {
                     </Form.Group>
                     <div className="formBtn" style={{ display: "flex", gap: "3%" }}>
                         <Button type="submit" variant="outline-dark" >Update</Button>
-                        <Button variant="outline-dark" >Close</Button>
+                        <NavLink to="/"><Button variant="outline-dark" >Close</Button></NavLink>
                     </div>
                 </Form>
             </div>
