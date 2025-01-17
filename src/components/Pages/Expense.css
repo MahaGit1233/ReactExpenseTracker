@@ -6,3 +6,8 @@
 .verifyBtn {
     margin-top: 10rem;
 }
+
+.logout {
+    display: flex;
+    gap: 3%;
+}
