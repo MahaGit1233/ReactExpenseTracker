@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import './Signup.css';
 import { Alert, Button, Form } from "react-bootstrap";
 import AuthContext from "../Store/auth-context";
+import { NavLink } from "react-router-dom";
 
 const Signup = () => {
     const [enteredMail, setEnteredMail] = useState('');
@@ -103,7 +104,7 @@ const Signup = () => {
         <div className="formBtn">
             <Button type="submit" variant="outline-dark">Login</Button>
             <div>
-                <a href="/">Forgot Password</a>
+                <NavLink to="/forgot-password">Forgot Password</NavLink>
             </div>
         </div>
     </Form>

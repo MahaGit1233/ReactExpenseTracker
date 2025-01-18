@@ -6,6 +6,7 @@ import { Switch } from "react-router-dom";
 import { Route } from "react-router-dom";
 import ProfileForm from "./components/Pages/ProfileForm";
 import { BrowserRouter } from "react-router-dom";
+import ForgotPassword from "./components/Pages/ForgotPassword";
 
 function App() {
   const authCtx = useContext(AuthContext);
@@ -13,10 +14,11 @@ function App() {
   return (
     <BrowserRouter>
       <div style={{ justifyItems: "center" }}>
-        {authCtx.isLoggedIn ? <Expense /> : <Signup />}
-        {authCtx.isLoggedIn && <Switch>
-          <Route path="/profile" component={ProfileForm} />
-        </Switch>}
+        <Switch>
+          <Route path="/" exact>{authCtx.isLoggedIn ? <Expense /> : <Signup />}</Route>
+          {authCtx.isLoggedIn && <Route path="/profile" component={ProfileForm} />}
+          <Route path="/forgot-password" component={ForgotPassword} />
+        </Switch>
       </div>
     </BrowserRouter>
   );
