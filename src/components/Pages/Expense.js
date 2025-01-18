@@ -1,12 +1,15 @@
 import React, { useContext, useState } from "react";
-import { Button, Navbar } from "react-bootstrap";
+import { Button, Form, Navbar } from "react-bootstrap";
 import AuthContext from "../Store/auth-context";
 import './Expense.css';
 import { NavLink } from "react-router-dom";
+import AddExpenses from "./AddExpenses";
+import ExpensesList from "./ExpensesList";
 
 const Expense = () => {
     const authCtx = useContext(AuthContext);
     const [verifyEmail, setVerifyEmail] = useState(false);
+    const [expenses, setExpenses] = useState([]);
 
     const verificationHandler = (event) => {
         event.preventDefault();
@@ -40,17 +43,26 @@ const Expense = () => {
         })
     }
 
+    const addExpenseHandler = (expense) => {
+        setExpenses((prevExpenses) => [...prevExpenses, expense]);
+    };
+
     return (
         <div>
             <Navbar className="header" style={{ position: "fixed", top: "0", left: "0", width: "100%", zIndex: "1000", backgroundColor: "gray", color: "whitesmoke" }}>
                 <i style={{ marginLeft: "2%" }}>Welcome to Expense Tracker!</i>
                 <div className="logout">
-                    <div style={{ backgroundColor: "bisque", color: "black", borderRadius: "10px", padding: "7px", marginLeft:"-7%" }}>
+                    <div style={{ backgroundColor: "bisque", color: "black", borderRadius: "10px", padding: "7px", marginLeft: "-7%" }}>
                         <i>Your profile is incomplete. <NavLink to='/profile'>Complete Now</NavLink></i>
                     </div>
                     <Button variant="outline-light" onClick={authCtx.logout}>Logout</Button>
                 </div>
             </Navbar>
+            <div style={{ marginTop: "5rem", textAlign: "center" }}><h2>Add Expenses</h2></div>
+            <AddExpenses onAddExpense={addExpenseHandler} />
+            <div style={{marginTop:"5%"}}>
+                <ExpensesList expenses={expenses} />
+            </div>
             <div className="verifyBtn">
                 <Button onClick={verificationHandler} variant="outline-dark">Verify EmailID</Button>
             </div>
