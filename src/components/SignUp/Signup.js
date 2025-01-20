@@ -13,7 +13,7 @@ const Signup = () => {
 
     const authCtx = useContext(AuthContext);
 
-    const url = isLogin ? 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDZDlAptDzLh8R3jC0ZXi-3cbYAQrdt1o8' : 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDZDlAptDzLh8R3jC0ZXi-3cbYAQrdt1o8';
+    const url = isLogin ? 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDH-EyAyyknxTa5hCgJ-ZZEFnrKoB1K4Uw' : 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDH-EyAyyknxTa5hCgJ-ZZEFnrKoB1K4Uw';
 
     const switchModeHandler = () => {
         setIsLogin((prevState) => !prevState);

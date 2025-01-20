@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { Button, Form, Navbar } from "react-bootstrap";
 import AuthContext from "../Store/auth-context";
 import './Expense.css';
@@ -11,10 +11,38 @@ const Expense = () => {
     const [verifyEmail, setVerifyEmail] = useState(false);
     const [expenses, setExpenses] = useState([]);
 
+    useEffect(() => {
+        fetch("https://react-expensetracker-f81a3-default-rtdb.firebaseio.com/expensetracker.json", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then((res) => {
+                if (!res.ok) {
+                    throw new Error("Failed to fetch expenses");
+                }
+                return res.json();
+            })
+            .then((data) => {
+                const loadedExpenses = [];
+                for (const key in data) {
+                    loadedExpenses.push({
+                        id: key,
+                        ...data[key],
+                    });
+                }
+                setExpenses(loadedExpenses);
+            })
+            .catch((err) => {
+                console.error(err.message);
+            });
+    }, [])
+
     const verificationHandler = (event) => {
         event.preventDefault();
 
-        fetch('https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyDZDlAptDzLh8R3jC0ZXi-3cbYAQrdt1o8', {
+        fetch('https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyDH-EyAyyknxTa5hCgJ-ZZEFnrKoB1K4Uw', {
             method: 'POST',
             body: JSON.stringify({
                 requestType: "VERIFY_EMAIL",
@@ -43,9 +71,18 @@ const Expense = () => {
         })
     }
 
-    const addExpenseHandler = (expense) => {
+    const addExpenseHandler = useCallback(async (expense) => {
+        const response = await fetch('https://react-expensetracker-f81a3-default-rtdb.firebaseio.com/expensetracker.json', {
+            method: "POST",
+            body: JSON.stringify(expense),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        const data = await response.json();
+        console.log(data);
         setExpenses((prevExpenses) => [...prevExpenses, expense]);
-    };
+    }, []);
 
     return (
         <div>
@@ -60,10 +97,10 @@ const Expense = () => {
             </Navbar>
             <div style={{ marginTop: "5rem", textAlign: "center" }}><h2>Add Expenses</h2></div>
             <AddExpenses onAddExpense={addExpenseHandler} />
-            <div style={{marginTop:"5%"}}>
+            <div style={{ marginTop: "5%" }}>
                 <ExpensesList expenses={expenses} />
             </div>
-            <div className="verifyBtn">
+            <div className="verifyBtn" style={{ textAlign: "center" }}>
                 <Button onClick={verificationHandler} variant="outline-dark">Verify EmailID</Button>
             </div>
         </div>

@@ -51,9 +51,9 @@ const AddExpenses = (props) => {
                     <Form.Select className="forminput" value={selectedOption} onChange={optionsHandler} >
                         <option value=''>--Select Category--</option>
                         <option>Food</option>
-                        <option>Milk</option>
                         <option>NewsPaper</option>
-                        <option>Petrol</option>
+                        <option>Fuel</option>
+                        <option>Electricity</option>
                         <option>Groceries</option>
                     </Form.Select>
                     <div className="formBtn">

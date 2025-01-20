@@ -11,7 +11,7 @@ const ProfileForm = () => {
     const authCtx = useContext(AuthContext);
 
     useEffect(() => {
-        fetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyDZDlAptDzLh8R3jC0ZXi-3cbYAQrdt1o8', {
+        fetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyDH-EyAyyknxTa5hCgJ-ZZEFnrKoB1K4Uw', {
             method: 'POST',
             body: JSON.stringify({
                 idToken: authCtx.token,
@@ -53,7 +53,7 @@ const ProfileForm = () => {
     const submitHandler = (event) => {
         event.preventDefault();
 
-        fetch('https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyDZDlAptDzLh8R3jC0ZXi-3cbYAQrdt1o8', {
+        fetch('https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyDH-EyAyyknxTa5hCgJ-ZZEFnrKoB1K4Uw', {
             method: 'POST',
             body: JSON.stringify({
                 idToken: authCtx.token,

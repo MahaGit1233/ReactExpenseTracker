@@ -15,7 +15,7 @@ const ExpensesList = (props) => {
                 <tbody>
                     {props.expenses.map((expense) => (
                         <tr>
-                            <td>{expense.amount}</td>
+                            <td>₹{expense.amount}</td>
                             <td>{expense.description}</td>
                             <td>{expense.category}</td>
                         </tr>
