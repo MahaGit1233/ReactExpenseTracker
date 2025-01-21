@@ -81,8 +81,45 @@ const Expense = () => {
         });
         const data = await response.json();
         console.log(data);
-        setExpenses((prevExpenses) => [...prevExpenses, expense]);
+        const expenseWithId = { id: data.name, ...expense };
+        setExpenses((prevExpenses) => [...prevExpenses, expenseWithId]);
     }, []);
+
+    const deleteHandler = async (id) => {
+        const response = await fetch(`https://react-expensetracker-f81a3-default-rtdb.firebaseio.com/expensetracker/${id}.json`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        if (response.ok) {
+            console.log('Expense successfully deleted');
+        }
+        setExpenses((prevExpenses) => prevExpenses.filter((expense) => expense.id !== id));
+    };
+
+    const editHandler = async (id) => {
+        const updatedAmount = prompt('Enter new Amount:');
+        const updatedDescription = prompt('Enter new Description:');
+        const updatedCategory = prompt('Enter new Category:');
+
+        const updatedExpense = {
+            amount: updatedAmount,
+            description: updatedDescription,
+            category: updatedCategory,
+        };
+
+        const response = await fetch(`https://react-expensetracker-f81a3-default-rtdb.firebaseio.com/expensetracker/${id}.json`, {
+            method: 'PUT',
+            body: JSON.stringify(updatedExpense),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        if (response.ok) {
+            setExpenses((prevExpenses) => prevExpenses.map((expense) => expense.id === id ? { id, ...updatedExpense } : expense));
+        }
+    }
 
     return (
         <div>
@@ -98,7 +135,7 @@ const Expense = () => {
             <div style={{ marginTop: "5rem", textAlign: "center" }}><h2>Add Expenses</h2></div>
             <AddExpenses onAddExpense={addExpenseHandler} />
             <div style={{ marginTop: "5%" }}>
-                <ExpensesList expenses={expenses} />
+                <ExpensesList onDelete={deleteHandler} onEdit={editHandler} expenses={expenses} />
             </div>
             <div className="verifyBtn" style={{ textAlign: "center" }}>
                 <Button onClick={verificationHandler} variant="outline-dark">Verify EmailID</Button>

@@ -1,5 +1,5 @@
 import React from "react";
-import { Table } from "react-bootstrap";
+import { Button, Table } from "react-bootstrap";
 
 const ExpensesList = (props) => {
     return (
@@ -14,10 +14,12 @@ const ExpensesList = (props) => {
                 </thead>
                 <tbody>
                     {props.expenses.map((expense) => (
-                        <tr>
+                        <tr key={expense.id}>
                             <td>₹{expense.amount}</td>
                             <td>{expense.description}</td>
                             <td>{expense.category}</td>
+                            <td><Button onClick={() => props.onEdit(expense.id)} variant="outline-dark" >Edit</Button></td>
+                            <td><Button onClick={() => props.onDelete(expense.id)} variant="outline-dark" >Delete</Button></td>
                         </tr>
                     ))}
                 </tbody>
