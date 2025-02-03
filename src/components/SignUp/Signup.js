@@ -3,20 +3,24 @@ import './Signup.css';
 import { Alert, Button, Form } from "react-bootstrap";
 import AuthContext from "../Store/auth-context";
 import { NavLink } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { authActions } from "../Store/redux";
 
 const Signup = () => {
     const [enteredMail, setEnteredMail] = useState('');
     const [enteredPass, setEnteredPass] = useState('');
     const [enteredConfirmPass, setEnteredConfirmPass] = useState('');
     const [error, setError] = useState('');
-    const [isLogin, setIsLogin] = useState(true);
+    // const [isLogin, setIsLogin] = useState(true);
+    // const authCtx = useContext(AuthContext);
 
-    const authCtx = useContext(AuthContext);
+    const isLogin = useSelector(state => state.auth.isLogin);
+    const dispatch = useDispatch();
 
     const url = isLogin ? 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDH-EyAyyknxTa5hCgJ-ZZEFnrKoB1K4Uw' : 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDH-EyAyyknxTa5hCgJ-ZZEFnrKoB1K4Uw';
 
     const switchModeHandler = () => {
-        setIsLogin((prevState) => !prevState);
+        dispatch(authActions.toggle());
     }
 
     const mailChangeHandler = (event) => {
@@ -61,7 +65,8 @@ const Signup = () => {
                 })
             }
         }).then((data) => {
-            authCtx.login(data.idToken);
+            dispatch(authActions.login({token: data.idToken, userId: data.localId}));
+            // authCtx.login(data.idToken);
             console.log(data);
         }).catch((err) => {
             alert(err.message);

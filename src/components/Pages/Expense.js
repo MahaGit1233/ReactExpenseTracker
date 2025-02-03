@@ -5,11 +5,24 @@ import './Expense.css';
 import { NavLink } from "react-router-dom";
 import AddExpenses from "./AddExpenses";
 import ExpensesList from "./ExpensesList";
+import { useDispatch, useSelector } from "react-redux";
+import { authActions, expensesActions } from "../Store/redux";
 
 const Expense = () => {
     const authCtx = useContext(AuthContext);
+
+    const dispatch = useDispatch();
+    const token = useSelector(state => state.auth.token);
+    const expenses = useSelector(state => state.expenses.expenses);
+    const totalAmount = useSelector(state => state.expenses.totalAmount);
+    const isPremium = useSelector(state => state.expenses.isPremium);
+
+    const logoutHandler = () => {
+        dispatch(authActions.logout())
+    }
+
     const [verifyEmail, setVerifyEmail] = useState(false);
-    const [expenses, setExpenses] = useState([]);
+    // const [expenses, setExpenses] = useState([]);
 
     useEffect(() => {
         fetch("https://react-expensetracker-f81a3-default-rtdb.firebaseio.com/expensetracker.json", {
@@ -32,12 +45,12 @@ const Expense = () => {
                         ...data[key],
                     });
                 }
-                setExpenses(loadedExpenses);
+                dispatch(expensesActions.setExpenses(loadedExpenses));
             })
             .catch((err) => {
                 console.error(err.message);
             });
-    }, [])
+    }, [dispatch])
 
     const verificationHandler = (event) => {
         event.preventDefault();
@@ -46,7 +59,7 @@ const Expense = () => {
             method: 'POST',
             body: JSON.stringify({
                 requestType: "VERIFY_EMAIL",
-                idToken: authCtx.token,
+                idToken: token,
             }),
             headers: {
                 'Content-Type': 'application/json',
@@ -81,8 +94,9 @@ const Expense = () => {
         });
         const data = await response.json();
         console.log(data);
-        const expenseWithId = { id: data.name, ...expense };
-        setExpenses((prevExpenses) => [...prevExpenses, expenseWithId]);
+        dispatch(expensesActions.addExpense({ id: data.name, ...expense }))
+        // const expenseWithId = { id: data.name, ...expense };
+        // setExpenses((prevExpenses) => [...prevExpenses, expenseWithId]);
     }, []);
 
     const deleteHandler = async (id) => {
@@ -95,7 +109,8 @@ const Expense = () => {
         if (response.ok) {
             console.log('Expense successfully deleted');
         }
-        setExpenses((prevExpenses) => prevExpenses.filter((expense) => expense.id !== id));
+        dispatch(expensesActions.deleteExpenses(id));
+        // setExpenses((prevExpenses) => prevExpenses.filter((expense) => expense.id !== id));
     };
 
     const editHandler = async (id) => {
@@ -117,9 +132,16 @@ const Expense = () => {
             },
         });
         if (response.ok) {
-            setExpenses((prevExpenses) => prevExpenses.map((expense) => expense.id === id ? { id, ...updatedExpense } : expense));
+            dispatch(expensesActions.editExpenses({ id, updatedExpense }));
+            // setExpenses((prevExpenses) => prevExpenses.map((expense) => expense.id === id ? { id, ...updatedExpense } : expense));
         }
     }
+
+    useEffect(() => {
+        if (totalAmount > 10000 && !isPremium) {
+            dispatch(expensesActions.activatePremium());
+        }
+    }, [totalAmount, dispatch, isPremium]);
 
     return (
         <div>
@@ -129,7 +151,7 @@ const Expense = () => {
                     <div style={{ backgroundColor: "bisque", color: "black", borderRadius: "10px", padding: "7px", marginLeft: "-7%" }}>
                         <i>Your profile is incomplete. <NavLink to='/profile'>Complete Now</NavLink></i>
                     </div>
-                    <Button variant="outline-light" onClick={authCtx.logout}>Logout</Button>
+                    <Button variant="outline-light" onClick={logoutHandler}>Logout</Button>
                 </div>
             </Navbar>
             <div style={{ marginTop: "5rem", textAlign: "center" }}><h2>Add Expenses</h2></div>
@@ -137,6 +159,11 @@ const Expense = () => {
             <div style={{ marginTop: "5%" }}>
                 <ExpensesList onDelete={deleteHandler} onEdit={editHandler} expenses={expenses} />
             </div>
+            {totalAmount > 10000 && isPremium && (
+                <div className="verifyBtn" style={{ textAlign: "center" }}>
+                    <Button variant="outline-dark" >Activate Premium</Button>
+                </div>
+            )}
             <div className="verifyBtn" style={{ textAlign: "center" }}>
                 <Button onClick={verificationHandler} variant="outline-dark">Verify EmailID</Button>
             </div>
