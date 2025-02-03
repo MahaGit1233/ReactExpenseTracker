@@ -161,7 +161,7 @@ const Expense = () => {
             </div>
             {totalAmount > 10000 && isPremium && (
                 <div className="verifyBtn" style={{ textAlign: "center" }}>
-                    <Button variant="outline-dark" >Activate Premium</Button>
+                    <NavLink to='/premium'><Button variant="outline-dark" >Activate Premium</Button></NavLink>
                 </div>
             )}
             <div className="verifyBtn" style={{ textAlign: "center" }}>
