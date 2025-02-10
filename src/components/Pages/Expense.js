@@ -154,7 +154,7 @@ const Expense = () => {
                     <Button variant="outline-light" onClick={logoutHandler}>Logout</Button>
                 </div>
             </Navbar>
-            <div style={{ marginTop: "5rem", textAlign: "center" }}><h2>Add Expenses</h2></div>
+            <div style={{ marginTop: "10rem", textAlign: "center" }}><h2>Add Expenses</h2></div>
             <AddExpenses onAddExpense={addExpenseHandler} />
             <div style={{ marginTop: "5%" }}>
                 <ExpensesList onDelete={deleteHandler} onEdit={editHandler} expenses={expenses} />
