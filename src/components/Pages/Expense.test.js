@@ -4,8 +4,18 @@ import Expense from './Expense';
 import { Provider } from 'react-redux';
 import store from '../Store/redux';
 import { BrowserRouter } from 'react-router-dom';
+import userEvent from '@testing-library/user-event';
 
 describe('Expense Component', () => {
+    test('should show login form after logging out', () => {
+        render(<Provider store={store} ><BrowserRouter><Expense /></BrowserRouter></Provider>);
+        const logoutElement = screen.getByRole('button', { name: 'Logout' });
+        userEvent.click(logoutElement);
+
+        const outputElement = screen.queryByText('Email Id:');
+        expect(outputElement).toBeNull();
+    });
+
     test('renders welcome', () => {
         render(<Provider store={store} ><BrowserRouter><Expense /></BrowserRouter></Provider>);
         const welcomeElement = screen.getByText('Welcome to Expense Tracker!');

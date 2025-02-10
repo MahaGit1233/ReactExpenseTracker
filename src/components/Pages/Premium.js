@@ -26,7 +26,7 @@ const Premium = () => {
             headers.join(','), ...rows.map(row => row.join(','))
         ].join("\n");
 
-    const blob = new Blob([ csvContent ], { type: 'text/csv;charser=utf-8;' });
+        const blob = new Blob([csvContent], { type: 'text/csv;charser=utf-8;' });
 
         const link = document.createElement("a");
         if (link.download !== undefined) {
@@ -47,6 +47,7 @@ const Premium = () => {
             </Navbar>
             <div style={{ marginTop: '5rem' }}>
                 <Button onClick={downloadCSV} variant={theme === 'light' ? 'outline-dark' : 'outline-light'} >Download File</Button>
+                <p style={{marginTop:'1rem'}}>Download the File</p>
             </div>
         </div>
     )

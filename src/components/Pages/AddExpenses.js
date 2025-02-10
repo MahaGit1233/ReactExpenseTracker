@@ -1,15 +1,11 @@
 import React, { useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import './AddExpenses.css';
-import { useDispatch } from "react-redux";
-import { expensesActions } from "../Store/redux";
 
 const AddExpenses = (props) => {
     const [enteredAmount, setEnteredAmount] = useState('');
     const [enteredDescription, setEnteredDescription] = useState('');
     const [selectedOption, setSelectedOption] = useState('');
-
-    const dispatch = useDispatch();
 
     const amountHandler = (event) => {
         setEnteredAmount(event.target.value);
@@ -35,7 +31,6 @@ const AddExpenses = (props) => {
             alert('Please fill all the fields');
         }
         else {
-            // dispatch(expensesActions.addExpense(Expenses));
             props.onAddExpense(Expenses);
         }
 
