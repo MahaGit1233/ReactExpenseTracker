@@ -9,13 +9,13 @@ const authSlice = createSlice({
         login(state, action) {
             state.isAuthenticated = true;
             state.token = action.payload.token;
-            state.userId=action.payload.userId;
-            localStorage.setItem('token', action.payload);
+            state.userId = action.payload.userId;
+            localStorage.setItem('token', action.payload.token);
         },
         logout(state) {
             state.isAuthenticated = false;
             state.token = null;
-            state.userId=null;
+            state.userId = null;
             localStorage.removeItem('token');
         },
         toggle(state) {

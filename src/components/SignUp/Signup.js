@@ -65,7 +65,7 @@ const Signup = () => {
                 })
             }
         }).then((data) => {
-            dispatch(authActions.login({token: data.idToken, userId: data.localId}));
+            dispatch(authActions.login({ token: data.idToken, userId: data.localId }));
             // authCtx.login(data.idToken);
             console.log(data);
         }).catch((err) => {

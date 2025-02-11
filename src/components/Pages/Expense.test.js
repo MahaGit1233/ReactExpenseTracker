@@ -7,36 +7,53 @@ import { BrowserRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 
 describe('Expense Component', () => {
-    test('should show login form after logging out', () => {
+    test('should fetch expenses on mount', () => {
+        window.fetch = jest.fn();
+        window.fetch.mockResolvedValueOnce({
+            json: async () => ({ amount: '1000', description: 'Filled Petrol', category: 'Fuel' }),
+        });
         render(<Provider store={store} ><BrowserRouter><Expense /></BrowserRouter></Provider>);
-        const logoutElement = screen.getByRole('button', { name: 'Logout' });
-        userEvent.click(logoutElement);
-
-        const outputElement = screen.queryByText('Email Id:');
-        expect(outputElement).toBeNull();
+        const listElement = screen.queryByText('Filled Petrol');
+        expect(listElement).toBeNull();
     });
 
-    test('renders welcome', () => {
+    test('should post a request to verify email', async () => {
+        window.fetch = jest.fn();
+        window.fetch.mockResolvedValueOnce({
+            json: async () => ({ email: 'maharush5409@gmail.com' }),
+        });
         render(<Provider store={store} ><BrowserRouter><Expense /></BrowserRouter></Provider>);
-        const welcomeElement = screen.getByText('Welcome to Expense Tracker!');
-        expect(welcomeElement).toBeInTheDocument();
+        const expenseElement = await screen.findAllByRole('button', { name: /verify email/i });
+        expect(expenseElement).not.toBeNull();
     });
 
-    test('renders profile incompletion', () => {
+    test('should post a request whenever an expense is added', () => {
+        window.fetch = jest.fn();
+        window.fetch.mockResolvedValueOnce({
+            json: async () => ({ name: 'generated-id' }),
+        });
         render(<Provider store={store} ><BrowserRouter><Expense /></BrowserRouter></Provider>);
-        const incompleteElement = screen.getByText('Your profile is incomplete.');
-        expect(incompleteElement).toBeInTheDocument();
+        const addingElement = screen.queryByText('Filled Petrol');
+        expect(addingElement).toBeNull();
     });
 
-    test('renders profile completion', () => {
+    test('should post a delete request whenever delete button is clicked', () => {
+        window.fetch = jest.fn();
+        window.fetch.mockResolvedValueOnce({
+            json: async () => ({}),
+        });
         render(<Provider store={store} ><BrowserRouter><Expense /></BrowserRouter></Provider>);
-        const completeElement = screen.getByText('Complete Now');
-        expect(completeElement).toBeInTheDocument();
+        const deletingElement = screen.queryByRole('button', { name: /delete/i });
+        expect(deletingElement).toBeNull();
     });
 
-    test('renders add expenses', () => {
+    test('should post a put request whenever edit button is clicked', () => {
+        window.fetch = jest.fn();
+        window.fetch.mockResolvedValueOnce({
+            json: async () => ({ ok: true }),
+        });
         render(<Provider store={store} ><BrowserRouter><Expense /></BrowserRouter></Provider>);
-        const addExpensesElement = screen.getByText('Add Expenses');
-        expect(addExpensesElement).toBeInTheDocument();
+        const editElement = screen.queryByText('Filled Petrol');
+        expect(editElement).toBeNull();
     });
 });

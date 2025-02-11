@@ -1,20 +1,20 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
-import AuthContext from "../Store/auth-context";
 import './ProfileForm.css';
 import { NavLink } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const ProfileForm = () => {
     const [enteredName, setEnteredName] = useState('');
     const [enteredURL, setEnteredURL] = useState('');
 
-    const authCtx = useContext(AuthContext);
+    const token = useSelector(state => state.auth.token);
 
     useEffect(() => {
         fetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyDH-EyAyyknxTa5hCgJ-ZZEFnrKoB1K4Uw', {
             method: 'POST',
             body: JSON.stringify({
-                idToken: authCtx.token,
+                idToken: token,
             }),
             headers: {
                 'Content-Type': 'application/json',
@@ -40,7 +40,7 @@ const ProfileForm = () => {
         }).catch(err => {
             console.log(err);
         })
-    }, [authCtx.token]);
+    }, [token]);
 
     const nameChangeHandler = (event) => {
         setEnteredName(event.target.value);
@@ -56,7 +56,7 @@ const ProfileForm = () => {
         fetch('https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyDH-EyAyyknxTa5hCgJ-ZZEFnrKoB1K4Uw', {
             method: 'POST',
             body: JSON.stringify({
-                idToken: authCtx.token,
+                idToken: token,
                 displayName: enteredName,
                 photoUrl: enteredURL,
                 deleteAttribute: [],
@@ -81,7 +81,7 @@ const ProfileForm = () => {
             console.log(data.idToken);
         }).catch((err) => {
             alert(err.message);
-        })
+        });
 
         setEnteredName('');
         setEnteredURL('');

@@ -30,26 +30,23 @@ const Expense = () => {
             headers: {
                 "Content-Type": "application/json",
             },
-        })
-            .then((res) => {
-                if (!res.ok) {
-                    throw new Error("Failed to fetch expenses");
-                }
-                return res.json();
-            })
-            .then((data) => {
-                const loadedExpenses = [];
-                for (const key in data) {
-                    loadedExpenses.push({
-                        id: key,
-                        ...data[key],
-                    });
-                }
-                dispatch(expensesActions.setExpenses(loadedExpenses));
-            })
-            .catch((err) => {
-                console.error(err.message);
-            });
+        }).then((res) => {
+            if (!res.ok) {
+                throw new Error("Failed to fetch expenses");
+            }
+            return res.json();
+        }).then((data) => {
+            const loadedExpenses = [];
+            for (const key in data) {
+                loadedExpenses.push({
+                    id: key,
+                    ...data[key],
+                });
+            }
+            dispatch(expensesActions.setExpenses(loadedExpenses));
+        }).catch((err) => {
+            console.log(err.message);
+        });
     }, [dispatch])
 
     const verificationHandler = (event) => {
