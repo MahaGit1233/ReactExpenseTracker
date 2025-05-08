@@ -22,8 +22,8 @@ const expensesSlice = createSlice({
             state.expenses = state.expenses.filter(expense => expense.id !== action.payload);
         },
         editExpenses(state, action) {
-            const { id, updatedExpense } = action.payload;
-            const existingExpense = state.expenses.find(expense => expense.id === id);
+            const updatedExpense = action.payload;
+            const existingExpense = state.expenses.find(expense => expense.id === updatedExpense.id);
             if (existingExpense) {
                 state.totalAmount = state.totalAmount - Number(existingExpense.amount) + Number(updatedExpense.amount);
                 existingExpense.amount = updatedExpense.amount;

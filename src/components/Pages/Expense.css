@@ -1,6 +1,6 @@
 .header {
     display: flex;
-    gap: 60%;
+    gap: 35%;
 }
 
 .verifyBtn {
@@ -10,4 +10,36 @@
 .logout {
     display: flex;
     gap: 3%;
+}
+
+.sun {
+    position: relative;
+    width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    margin-left: -15px;
+    margin-top: -2px;
+    height: 100%;
+    background-color: red;
+    border-radius: 20px;
+    z-index: 2;
+    transition: 0.5s ease-in-out;
+}
+
+.moon {
+    position: relative;
+    width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    margin-left: -35px;
+    margin-top: -2px;
+    height: 100%;
+    background-color: blue;
+    border-radius: 20px;
+    z-index: 2;
+    transition: 0.5s ease-in-out;
 }

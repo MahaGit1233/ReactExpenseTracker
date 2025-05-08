@@ -1,0 +1,116 @@
+.expslist{
+    padding-top: 20px;
+    margin-top: 5.4%;
+}
+
+.total{
+    border: 1px solid black;
+    display: flex;
+    gap: 8%;
+    background-color: black;
+    color: white;
+    padding-top: 3%;
+    padding-bottom: 3%;
+    padding-right: 5%;
+    padding-left: 3%;
+    font-size: 30px;
+    margin-left: 40%;
+    margin-right: 42%;
+    border-radius: 20px;
+    font-family: 'Bahnschrift Light';
+    transition: all 1.0s;
+}
+
+.inr{
+    color: gray;
+    font-size: 15px;
+    margin-left: 25%;
+    margin-top: 10%;
+}
+
+.total1{
+    border: 1px solid white;
+    display: flex;
+    gap: 8%;
+    background-color: white;
+    color: black;
+    padding-top: 3%;
+    padding-bottom: 3%;
+    padding-right: 5%;
+    padding-left: 3%;
+    font-size: 30px;
+    margin-left: 40%;
+    margin-right: 42%;
+    border-radius: 20px;
+    font-family: 'Bahnschrift Light';
+    transition: all 1.0s;
+}
+
+.inr1{
+    color: gray;
+    font-size: 15px;
+    margin-left: 25%;
+    margin-top: 10%;
+}
+
+.list {
+    display: flex;
+    justify-content: space-between;
+    margin: 2% 5% 0 10%;
+    width: 50%;
+    background-color: #FDF5E6;
+    font-family: 'Bahnschrift Light';
+    border-radius: 12px;
+    list-style-type: none;
+    align-items: center;
+}
+
+.expdetails{
+    padding-top: 1.5%;
+    padding-bottom: 1.5%;
+    margin-left: -12%;
+}
+
+.cat {
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    margin-top: 4.5%;
+    margin-bottom: 4%;
+    margin-left: 8%;
+    border: 1px solid #efebeb;
+    border-radius: 25px;
+    background-color: #efebeb;
+}
+
+.des{
+    color: black;
+    margin-left: 1rem;
+    font-size: 21px;
+    padding: 5px;
+}
+
+.date{
+    color: black;
+    margin-left: 1rem;
+    font-size: medium;
+    padding: 5px;
+}
+
+.amount{
+    color: black;
+    margin-left: 1rem;
+    font-weight: bold;
+    padding: 5px;
+}
+
+.editbtn{
+    margin-top: 10%;
+    margin-left: 30%;
+}
+
+.delbtn{
+    margin-top: 8%;
+    margin-left: -100%;
+}

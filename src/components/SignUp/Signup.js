@@ -1,7 +1,6 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import './Signup.css';
-import { Alert, Button, Form } from "react-bootstrap";
-import AuthContext from "../Store/auth-context";
+import { Alert, Button, Card, Form } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { authActions } from "../Store/redux";
@@ -65,7 +64,13 @@ const Signup = () => {
                 })
             }
         }).then((data) => {
-            dispatch(authActions.login({ token: data.idToken, userId: data.localId }));
+            localStorage.setItem('email', enteredMail.replace(/[@.]/g, '_'));
+            if (isLogin) {
+                dispatch(authActions.login({ token: data.idToken, userId: data.localId }));
+            }
+            else {
+                dispatch(authActions.signup({ token: data.idToken, userId: data.localId }));
+            }
             // authCtx.login(data.idToken);
             console.log(data);
         }).catch((err) => {
@@ -79,17 +84,18 @@ const Signup = () => {
     };
 
     const signup = <Form className="form" onSubmit={formSubmitHandler}>
+        <h1>Register</h1>
         <Form.Group>
             <Form.Label className="formlabel">Email Id:</Form.Label>
-            <Form.Control className="forminput" type="email" value={enteredMail} onChange={mailChangeHandler} />
+            <Form.Control style={{ backgroundColor: '#efebeb' }} className="forminput" type="email" value={enteredMail} onChange={mailChangeHandler} placeholder="Enter your mail Id" />
         </Form.Group>
         <Form.Group>
             <Form.Label className="formlabel">Password:</Form.Label>
-            <Form.Control className="forminput" type="password" value={enteredPass} onChange={passChangeHandler} />
+            <Form.Control style={{ backgroundColor: '#efebeb' }} className="forminput" type="password" value={enteredPass} onChange={passChangeHandler} placeholder="Enter Password" />
         </Form.Group>
         <Form.Group>
             <Form.Label className="formlabel">Confirm Password:</Form.Label>
-            <Form.Control className="forminput" type="password" value={enteredConfirmPass} onChange={confirmPassChangeHandler} />
+            <Form.Control style={{ backgroundColor: '#efebeb' }} className="forminput" type="password" value={enteredConfirmPass} onChange={confirmPassChangeHandler} placeholder="Confirm your Password" />
         </Form.Group>
         {error && <Alert variant="danger">{error}</Alert>}
         <div className="formBtn">
@@ -97,32 +103,45 @@ const Signup = () => {
         </div>
     </Form>
 
-    const login = <Form className="form" onSubmit={formSubmitHandler}>
+    const login = <Form className="form1" onSubmit={formSubmitHandler}>
         <Form.Group>
             <Form.Label className="formlabel">Email Id:</Form.Label>
-            <Form.Control className="forminput" type="email" value={enteredMail} onChange={mailChangeHandler} />
+            <Form.Control style={{ backgroundColor: '#efebeb' }} className="forminput" type="email" value={enteredMail} onChange={mailChangeHandler} placeholder="Enter your mail Id" />
         </Form.Group>
         <Form.Group>
             <Form.Label className="formlabel">Password:</Form.Label>
-            <Form.Control className="forminput" type="password" value={enteredPass} onChange={passChangeHandler} />
+            <Form.Control style={{ backgroundColor: '#efebeb' }} className="forminput" type="password" value={enteredPass} onChange={passChangeHandler} placeholder="Enter your Password" />
         </Form.Group>
         <div className="formBtn">
-            <Button type="submit" variant="outline-dark">Login</Button>
             <div>
                 <NavLink to="/forgot-password">Forgot Password</NavLink>
             </div>
+            <Button type="submit" variant="outline-dark">Login</Button>
         </div>
     </Form>
 
     return (
-        <div>
-            <div className="signupform">
-                {isLogin ? login : signup}
-            </div>
-            <div>
-                <Button onClick={switchModeHandler} style={{ marginTop: "5%" }} variant="outline-dark">{isLogin ? "Don't have an account? Sign up" : "Have an account? Login"}</Button>
-            </div>
-        </div>
+        <Card className="card">
+            <Card.Body className="cardbody">
+                {!isLogin ? <div className="body">
+                    <div className="bodyItems">
+                        <h1>Welcome!</h1>
+                        <h5>Sign up to create an account</h5>
+                        <Button onClick={switchModeHandler} variant="outline-dark">{isLogin ? "Don't have an account? Sign up" : " Already have an account? Login"}</Button>
+                    </div>
+                </div> :
+                    <div className="body1">
+                        <div className="bodyItems1">
+                            <h1>Welcome Back!</h1>
+                            <h5>Log In to proceed to your account</h5>
+                            <Button onClick={switchModeHandler} variant="outline-dark">{isLogin ? "Don't have an account? Sign up" : " Already have an account? Login"}</Button>
+                        </div>
+                    </div>}
+                <div className="signupform">
+                    {isLogin ? login : signup}
+                </div>
+            </Card.Body>
+        </Card>
     );
 };
 

@@ -1,31 +1,48 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
-import { Button, Form, Navbar } from "react-bootstrap";
-import AuthContext from "../Store/auth-context";
+import React, { useCallback, useEffect, useState } from "react";
+import { Button, Image, Navbar } from "react-bootstrap";
 import './Expense.css';
 import { NavLink } from "react-router-dom";
 import AddExpenses from "./AddExpenses";
 import ExpensesList from "./ExpensesList";
 import { useDispatch, useSelector } from "react-redux";
-import { authActions, expensesActions } from "../Store/redux";
+import { authActions, expensesActions, themeActions } from "../Store/redux";
 
 const Expense = () => {
-    const authCtx = useContext(AuthContext);
+    const [editExpense, setEditExpense] = useState(null);
+    const [showExpenseForm, setShowExpenseForm] = useState(false);
+    const [verifyEmail, setVerifyEmail] = useState(false);
 
     const dispatch = useDispatch();
     const token = useSelector(state => state.auth.token);
     const expenses = useSelector(state => state.expenses.expenses);
     const totalAmount = useSelector(state => state.expenses.totalAmount);
     const isPremium = useSelector(state => state.expenses.isPremium);
+    const isLogin = useSelector(state => state.auth.isLogin);
+    const theme = useSelector(state => state.theme.theme);
+    const photoUrl = isLogin ? localStorage.getItem('photoUrl') : "https://i.pinimg.com/736x/be/94/e6/be94e6323f277445d135d5025c0d41d2.jpg";
 
     const logoutHandler = () => {
-        dispatch(authActions.logout())
-    }
+        dispatch(authActions.logout());
+    };
 
-    const [verifyEmail, setVerifyEmail] = useState(false);
-    // const [expenses, setExpenses] = useState([]);
+    const toggleThemeHandler = () => {
+        dispatch(themeActions.toggleTheme());
+    };
+
+    const showExpenseFormHandler = () => {
+        setShowExpenseForm(true)
+    };
+
+    const closeHandler = () => {
+        setShowExpenseForm(false);
+    };
+
+    console.log(localStorage.getItem('email'));
+    const storedEmail = localStorage.getItem('email').replace(/[.@]/g, '_');
 
     useEffect(() => {
-        fetch("https://react-expensetracker-f81a3-default-rtdb.firebaseio.com/expensetracker.json", {
+        console.log(storedEmail);
+        fetch(`https://react-expensetracker-f81a3-default-rtdb.firebaseio.com/${storedEmail}.json`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -36,6 +53,7 @@ const Expense = () => {
             }
             return res.json();
         }).then((data) => {
+            console.log(data);
             const loadedExpenses = [];
             for (const key in data) {
                 loadedExpenses.push({
@@ -47,7 +65,7 @@ const Expense = () => {
         }).catch((err) => {
             console.log(err.message);
         });
-    }, [dispatch])
+    }, [dispatch]);
 
     const verificationHandler = (event) => {
         event.preventDefault();
@@ -82,22 +100,37 @@ const Expense = () => {
     }
 
     const addExpenseHandler = useCallback(async (expense) => {
-        const response = await fetch('https://react-expensetracker-f81a3-default-rtdb.firebaseio.com/expensetracker.json', {
-            method: "POST",
-            body: JSON.stringify(expense),
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-        const data = await response.json();
-        console.log(data);
-        dispatch(expensesActions.addExpense({ id: data.name, ...expense }))
-        // const expenseWithId = { id: data.name, ...expense };
-        // setExpenses((prevExpenses) => [...prevExpenses, expenseWithId]);
-    }, []);
+        if (editExpense) {
+            setShowExpenseForm(false);
+            const response = await fetch(`https://react-expensetracker-f81a3-default-rtdb.firebaseio.com/${storedEmail}/${editExpense.id}.json`, {
+                method: 'PUT',
+                body: JSON.stringify(expense),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (response.ok) {
+                dispatch(expensesActions.editExpenses(expense));
+                setEditExpense(null);
+            };
+        }
+        else {
+            setShowExpenseForm(false);
+            const response = await fetch(`https://react-expensetracker-f81a3-default-rtdb.firebaseio.com/${storedEmail}.json`, {
+                method: "POST",
+                body: JSON.stringify(expense),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            const data = await response.json();
+            console.log(data);
+            dispatch(expensesActions.addExpense({ id: data.name, ...expense }))
+        }
+    }, [editExpense]);
 
     const deleteHandler = async (id) => {
-        const response = await fetch(`https://react-expensetracker-f81a3-default-rtdb.firebaseio.com/expensetracker/${id}.json`, {
+        const response = await fetch(`https://react-expensetracker-f81a3-default-rtdb.firebaseio.com/${storedEmail}/${id}.json`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -107,32 +140,12 @@ const Expense = () => {
             console.log('Expense successfully deleted');
         }
         dispatch(expensesActions.deleteExpenses(id));
-        // setExpenses((prevExpenses) => prevExpenses.filter((expense) => expense.id !== id));
     };
 
-    const editHandler = async (id) => {
-        const updatedAmount = prompt('Enter new Amount:');
-        const updatedDescription = prompt('Enter new Description:');
-        const updatedCategory = prompt('Enter new Category:');
-
-        const updatedExpense = {
-            amount: updatedAmount,
-            description: updatedDescription,
-            category: updatedCategory,
-        };
-
-        const response = await fetch(`https://react-expensetracker-f81a3-default-rtdb.firebaseio.com/expensetracker/${id}.json`, {
-            method: 'PUT',
-            body: JSON.stringify(updatedExpense),
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-        if (response.ok) {
-            dispatch(expensesActions.editExpenses({ id, updatedExpense }));
-            // setExpenses((prevExpenses) => prevExpenses.map((expense) => expense.id === id ? { id, ...updatedExpense } : expense));
-        }
-    }
+    const editHandler = (expense) => {
+        setEditExpense(expense);
+        setShowExpenseForm(true);
+    };
 
     useEffect(() => {
         if (totalAmount > 10000 && !isPremium) {
@@ -141,28 +154,27 @@ const Expense = () => {
     }, [totalAmount, dispatch, isPremium]);
 
     return (
-        <div>
-            <Navbar className="header" style={{ position: "fixed", top: "0", left: "0", width: "100%", zIndex: "1000", backgroundColor: "gray", color: "whitesmoke" }}>
-                <i style={{ marginLeft: "2%" }}>Welcome to Expense Tracker!</i>
-                <div className="logout">
-                    <div style={{ backgroundColor: "bisque", color: "black", borderRadius: "10px", padding: "7px", marginLeft: "-7%" }}>
-                        <i>Your profile is incomplete. <NavLink to='/profile'>Complete Now</NavLink></i>
+        <div style={{ backgroundColor: theme === 'light' ? '#fff' : '#333', transition: 'all 1.0s', height: '150vh', width: '100%' }}>
+            <Navbar className={theme === 'light' ? "bg-secondary justify-content-between" : "bg-body-tertiary justify-content-between"} style={{ transition: 'all 1.0s', display: 'flex', justifyContent: 'space-between' }} fixed="top">
+                <i style={{ marginLeft: "2%", color: theme === 'light' ? 'white' : 'black' }}>Welcome to Expense Tracker!</i>
+                <div style={{ marginRight: '-13%', display: 'flex', gap: '3%' }}>
+                    <div style={{ marginTop: '1%' }}>
+                        <Button onClick={verificationHandler} variant={theme === 'light' ? "outline-light" : "outline-dark"}>Verify EmailID</Button>
                     </div>
-                    <Button variant="outline-light" onClick={logoutHandler}>Logout</Button>
+                    {totalAmount > 10000 && isPremium && (
+                        <NavLink style={{ marginTop: '1%' }} to='/premium'><Button variant={theme === 'light' ? "outline-light" : "outline-dark"} >Activate Premium</Button></NavLink>
+                    )}
+                    <Button variant={theme === 'light' ? "outline-light" : "outline-dark"} style={{ marginTop: '2%', marginBottom: '2%', borderRadius: '17px', paddingLeft: '15px', paddingRight: '15px' }} onClick={toggleThemeHandler}>{theme === 'light' ? '˚☽˚.⋆' : ' ☀︎ '}</Button>
+                    <div style={{ marginTop: '2.5%' }}>
+                        <Button variant={theme === 'light' ? "outline-light" : "outline-dark"} onClick={logoutHandler}>Logout</Button>
+                    </div>
+                    <NavLink to='/profile'><Image style={{ width: '20%', height: '80%', marginTop: '2.5%' }} src={photoUrl} roundedCircle /></NavLink>
                 </div>
             </Navbar>
-            <div style={{ marginTop: "10rem", textAlign: "center" }}><h2>Add Expenses</h2></div>
-            <AddExpenses onAddExpense={addExpenseHandler} />
-            <div style={{ marginTop: "5%" }}>
+            <Button onClick={showExpenseFormHandler} style={{ position: 'fixed', bottom: '20px', right: '20px', border: 'none', width: '60px', height: '60px', borderRadius: '50%', fontSize: '2rem', boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.3)', cursor: 'pointer', transition: 'background 0.35' }} variant={theme === 'light' ? "dark" : "light"}>+</Button>
+            {showExpenseForm && <AddExpenses onAddExpense={addExpenseHandler} editExpense={editExpense} setEditExpense={setEditExpense} onClose={closeHandler} />}
+            <div style={{ marginTop: "1%" }}>
                 <ExpensesList onDelete={deleteHandler} onEdit={editHandler} expenses={expenses} />
-            </div>
-            {totalAmount > 10000 && isPremium && (
-                <div className="verifyBtn" style={{ textAlign: "center" }}>
-                    <NavLink to='/premium'><Button variant="outline-dark" >Activate Premium</Button></NavLink>
-                </div>
-            )}
-            <div className="verifyBtn" style={{ textAlign: "center" }}>
-                <Button onClick={verificationHandler} variant="outline-dark">Verify EmailID</Button>
             </div>
         </div>
     )
